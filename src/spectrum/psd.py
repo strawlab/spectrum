@@ -520,7 +520,7 @@ class Spectrum(object):
 
     def scale(self):
         if self.scale_by_freq is True:
-            self.psd *= 2*plt.pi/self.df
+            self.psd *= 2*numpy.pi/self.df
             
     def frequencies(self, sides=None):
         
@@ -610,11 +610,11 @@ class Spectrum(object):
         
         return newpsd
     
-    def plot(self, filename=None, norm=False, ylim=None,
+    def plot(self, ax=None, norm=False, ylim=None,
               sides=None,  **kargs):
         """a simple plotting routine to plot the PSD versus frequency.
         
-        :param str filename: save the figure into a file
+        :param str ax: axes to plot into
         :param norm: False by default. If True, the PSD is normalised.
         :param ylim: readjust the y range .
         :param sides: if not provided, :attr:`sides` is used. See :attr:`sides` 
@@ -662,29 +662,27 @@ class Spectrum(object):
             
         if len(psd) != len(frequencies):
             raise ValueError("PSD length is %s and freq length is %s" % (len(psd), len(frequencies)))
+
+        if ax is None:
+            ax = plt.figure().gca()
             
-        from pylab import plot, log10,savefig, grid, xlim
-        from pylab import ylim as plt_ylim
-        
         if norm:
-            plot(frequencies, 10*log10(psd/max(psd)),  **kargs)
+            ax.plot(frequencies, 10*numpy.log10(psd/max(psd)),  **kargs)
         else:
-            plot(frequencies, 10*log10(psd),**kargs)
+            ax.plot(frequencies, 10*numpy.log10(psd),**kargs)
             
         
-        plt.xlabel('Frequency')
-        plt.ylabel('Power (dB)')
-        grid(True)
+        ax.set_xlabel('Frequency')
+        ax.set_ylabel('Power (dB)')
+        ax.grid(True)
         if ylim:
-            plt_ylim(ylim)
+            ax.set_ylim(ylim)
         if sides == 'onesided':
-            xlim(0,self.sampling/2.)
+            ax.set_xlim(0,self.sampling/2.)
         elif sides == 'twosided':
-            xlim(0, self.sampling)
+            ax.set_xlim(0, self.sampling)
         elif sides == 'centerdc':
-            xlim(-self.sampling/2., self.sampling/2.)
-        if filename:
-            savefig(filename)
+            ax.set_xlim(-self.sampling/2., self.sampling/2.)
         del psd, frequencies #is it needed?
 
     def power(self):
@@ -705,7 +703,7 @@ class Spectrum(object):
         if self.scale_by_freq == False:
             return sum(self.psd) * len(self.psd)
         else:
-            return sum(self.psd) * self.df/(2.*plt.pi)
+            return sum(self.psd) * self.df/(2.*numpy.pi)
 
     def _str_title(self):
         return "Spectrum summary\n"
