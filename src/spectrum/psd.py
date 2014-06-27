@@ -458,7 +458,7 @@ class Spectrum(object):
         # if a user sets the PSD manually, the only check available is that
         # a onesided version must be odd, and a twosided must be even
         if self.datatype == 'real':
-            assert len(psd) % 2 == 1, 'odd data, so PSD must be one-sided'
+            #assert len(psd) % 2 == 1, 'odd data, so PSD must be one-sided'
             self.__sides = 'onesided'
             self.__NFFT = (len(psd)-1) * 2
             self.__psd = numpy.array(psd)
